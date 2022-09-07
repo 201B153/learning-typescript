@@ -50,6 +50,7 @@ const product = {
 enum Role { ADMIN, READ_ONLY, AUTHOR }; // First letter capital always for enum
 // Speacial nos can alsobe assigned to ADMIN etc and other will follow suite of the first one.
 // OR can we written as { ADMIN = 'ADMINDT', READ_ONLY = 100 }
+// We can also use any OR any[] type for ts behave as js.
 const person = {
   // This is better appraoch
   name: 'mayank',

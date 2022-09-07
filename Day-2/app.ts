@@ -1,26 +1,20 @@
-function add(n1: number, n2: number, showResult: boolean, phrase: string) {
-  // if (typeof n1 !== 'number' || typeof n2 !== 'number') {
-  //   throw new Error('incorrect type input');
-  // } else {
-  // return n1 + n2;
-  // }
-  let result = n1 + n2;
-  if (showResult) {
-    console.log(phrase + result);
-  } else {
-    return result;
-  }
+let userInput: unknown;
+// Can only we assigned to itself no other types can assign unknown Like
+userInput = 4;
+userInput = 'mayank';
+let userName: string;
+// userName = userInput; // not assignable BUT any is EXAMPLE
+let userName2: any;
+userName2 = 'mayank'
+userName = userName2; // It is assignable
+// For assigning unknown to other types be can use
+if (typeof userInput === 'string') {
+    userName = userInput;
 }
-//  can also be written as 
-let num1: number; // this is a way to assign
-num1 = 5;
-// const num1 = '5';
-// const num1 = 5;
-console.log(typeof num1);
-const num2 = 2.78; // what js does is it converts 2.78 to string to concatenate each other
-// constant for const and variable for let
-const printResult = true;
-const resultPhrase = 'Result is: '
 
-const result = add(num1, num2, printResult, resultPhrase);
-// console.log(result);
+// This will crash the server so now output is possible
+function generateError(message: string, code: number): never { // Here return type will we never OR we can provide void
+    throw { message: message, errorCode: code};
+}
+
+generateError('An Error Message', 400);

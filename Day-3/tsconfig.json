@@ -11,8 +11,16 @@
     // "disableReferencedProjectLoad": true,             /* Reduce the number of projects loaded automatically by TypeScript. */
 
     /* Language and Environment */
+    // target provides the version of js to compile
     "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    // es condiders all basic requirements present in ts by default
+    // But lib makes the default setting not available and runs the provide type
+    "lib": [    // All core js requirements for running ts file  that is default
+      "DOM", // Dom is module that allows api's in ts
+      "ES2016", //js library for supporting js
+      "DOM.Iterable", 
+      "ScriptHost"
+    ],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
     // "jsx": "preserve",                                /* Specify what JSX code is generated. */
     // "experimentalDecorators": true,                   /* Enable experimental support for TC39 stage 2 draft decorators. */
     // "emitDecoratorMetadata": true,                    /* Emit design-type metadata for decorated declarations in source files. */
@@ -26,7 +34,8 @@
 
     /* Modules */
     "module": "commonjs",                                /* Specify what module code is generated. */
-    // "rootDir": "./",                                  /* Specify the root folder within your source files. */
+    // Provides link to main src folder containing .ts files
+    "rootDir": "./src",                                  /* Specify the root folder within your source files. */
     // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
     // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
     // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
@@ -47,10 +56,13 @@
     // "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
     // "declarationMap": true,                           /* Create sourcemaps for d.ts files. */
     // "emitDeclarationOnly": true,                      /* Only output d.ts files and not JavaScript files. */
+    // Sourcemap helps in debugiing .ts file in compiler 
     // "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
     // "outFile": "./",                                  /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
-    // "outDir": "./",                                   /* Specify an output folder for all emitted files. */
-    // "removeComments": true,                           /* Disable emitting comments. */
+    // The Outdir provide dist folder for storing all js compile files
+    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+    // Removecomments removes all the comments in js file.
+    "removeComments": true,                           /* Disable emitting comments. */
     // "noEmit": true,                                   /* Disable emitting files from a compilation. */
     // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */
     // "importsNotUsedAsValues": "remove",               /* Specify emit/checking behavior for imports that are only used for types. */
@@ -76,11 +88,15 @@
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
 
     /* Type Checking */
+    // strict works equal to all the below events
     "strict": true,                                      /* Enable all strict type-checking options. */
-    // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+    // it make sure about type susing in ts file
+    // "noImplicitAny": false,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+    // strict null checks checks for null and provide error we can clode it from here
     // "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
     // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
-    // "strictBindCallApply": true,                      /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
+    // It allows bind func in ts
+    "strictBindCallApply": false,                      /* Check that the arguments for 'bind', 'call', and 'apply' methods match the original function. */
     // "strictPropertyInitialization": true,             /* Check for class properties that are declared but not set in the constructor. */
     // "noImplicitThis": true,                           /* Enable error reporting when 'this' is given the type 'any'. */
     // "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
@@ -99,5 +115,17 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+  }, // Adding exclude will not add file to running order of tsc
+  "exclude": [
+    "**/*.dev.ts", // OR we can ignore all files with same extension using 
+    // "*.dev.ts"  dev.ts being the extension OR **/*.dev.ts All files in any folder or subfolder will be ignored.
+    "node_modules" // already added by default
+  ],
+  "include": [ // Add all file or not add anything in include
+    "src/app.ts",
+    "src/analytics.ts"
+  ],
+  "file": [ // not used in projects
+    "app.ts"
+  ]
 }

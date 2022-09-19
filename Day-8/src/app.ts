@@ -25,6 +25,10 @@ type Numeric = number | boolean;
 type Universal = Combineable & Numeric;
 
 // Type Gaurds help in union type
+// we can use function overloads to specify other types allowed in afunction
+function add(a: number, b: number): number;
+// we can add as many as we want
+function add(a: string, b: string): string;
 function add(a: Combineable, b: Combineable) {
   if (typeof a == 'string' || typeof b === 'string') {
     // Works as type gaurds to check union type working
@@ -32,6 +36,42 @@ function add(a: Combineable, b: Combineable) {
   }
   return a + b;
 }
+
+//  Function overloads
+// we can either do it like this using type casting or use function overlaods
+const result = add('mayank', 'tomar') as string;
+const result1 = add('mayank', 'tomar');
+result.split(' ');
+result1.split(' ');
+
+const fetchedUserData = {
+  id: 'u1',
+  name: 'mayank',
+  job: { title: 'CEO', description: 'My life' },
+};
+// when we don't know type of property
+// like when fetching from source but we dont there it exist or not
+console.log(fetchedUserData.job.title);
+// then in JS we will write it as
+console.log(fetchedUserData.job && fetchedUserData.job.title);
+// if it exist then we will get data if not then no error will occur
+// while in ts we will write it as
+console.log(fetchedUserData?.job?.title);
+// this will execute error free loading using optional chaining
+// it is like if check in JS
+
+// we can also use Nullish coalescing
+// like when fetching data cannot be verified thatit is null or not we will write it as
+const userInputNull = null;
+// then to check it in ts we will use
+const storeData = userInputNull || 'DEFAULT';
+console.log(storeData);
+// here issue is it will treat blank string as default
+//therefore in ts it will we written as
+// we will use ?? operator like
+const storeData2 = userInputNull ?? 'DEFAULT';// it checks wether the string is null or undefined only not empty or 0
+// it will show default for only null and undefined while skipping all other to exact output
+
 
 type unknownEmployee = Employee | Admin;
 
@@ -152,6 +192,13 @@ if (userInput3) {
 // Index Types
 // error identifier
 interface ErrorContainer {
-    //when u don't know what may or may not be property count and what type of property will be there
-    [prop: string]: string;
+  //when u don't know what may or may not be property count and what type of property will be there
+  // I dont know exact name niether do i know exact property count
+  // BUT all i know is that the following property is string
+  // id : string; // know we can only assign string
+  [prop: string]: string;
 }
+const errorBag: ErrorContainer = {
+  email: 'Not a valid mail',
+  username: 'must be capital',
+};

@@ -1,11 +1,11 @@
 "use strict";
+var _a;
 console.log('mayank');
 const e1 = {
     name: 'mayank',
     privviledges: ['create-server'],
     startDate: new Date(),
 };
-// Type Gaurds help in union type
 function add(a, b) {
     if (typeof a == 'string' || typeof b === 'string') {
         // Works as type gaurds to check union type working
@@ -13,6 +13,37 @@ function add(a, b) {
     }
     return a + b;
 }
+//  Function overloads
+// we can either do it like this using type casting or use function overlaods
+const result = add('mayank', 'tomar');
+const result1 = add('mayank', 'tomar');
+result.split(' ');
+result1.split(' ');
+const fetchedUserData = {
+    id: 'u1',
+    name: 'mayank',
+    job: { title: 'CEO', description: 'My life' },
+};
+// when we don't know type of property
+// like when fetching from source but we dont there it exist or not
+console.log(fetchedUserData.job.title);
+// then in JS we will write it as
+console.log(fetchedUserData.job && fetchedUserData.job.title);
+// if it exist then we will get data if not then no error will occur
+// while in ts we will write it as
+console.log((_a = fetchedUserData === null || fetchedUserData === void 0 ? void 0 : fetchedUserData.job) === null || _a === void 0 ? void 0 : _a.title);
+// this will execute error free loading using optional chaining
+// it is like if check in JS
+// we can also use Nullish coalescing
+// like when fetching data cannot be verified thatit is null or not we will write it as
+const userInputNull = null;
+// then to check it in ts we will use
+const storeData = userInputNull || 'DEFAULT';
+console.log(storeData);
+// here issue is it will treat blank string as default
+//therefore in ts it will we written as
+// we will use ?? operator like
+const storeData2 = userInputNull !== null && userInputNull !== void 0 ? userInputNull : 'DEFAULT'; // it checks wether the string is null or undefined only not empty or 0
 function printEmployeeInformation(emp) {
     console.log('name: ' + emp.name);
     if ('privviledges' in emp) {
@@ -103,3 +134,7 @@ const userInput3 = document.getElementById('input-id');
 if (userInput3) {
     userInput3.value = 'hi, There Element';
 }
+const errorBag = {
+    email: 'Not a valid mail',
+    username: 'must be capital',
+};

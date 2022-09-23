@@ -6,6 +6,63 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+// Project Management Class
+class ProjectState {
+    constructor() {
+        this.listeners = [];
+        this.projects = [];
+    }
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        }
+        this.instance = new ProjectState();
+        return this.instance;
+    }
+    addListener(listenerFn) {
+        this.listeners.push(listenerFn);
+    }
+    addProject(title, description, numOfPeople) {
+        const newProject = {
+            id: Math.random().toString(),
+            title: title,
+            description: description,
+            people: numOfPeople,
+        };
+        this.projects.push(newProject);
+        for (const listenerFn of this.listeners) {
+            listenerFn(this.projects.slice());
+        }
+    }
+}
+// const projectState = new ProjectState();
+// Or we can use private constructor
+const projectState = ProjectState.getInstance();
+function validate(validatableInput) {
+    let isValid = true;
+    if (validatableInput.required) {
+        isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+    }
+    if (validatableInput.minLength != null &&
+        typeof validatableInput.value === 'string') {
+        isValid =
+            isValid && validatableInput.value.length >= validatableInput.minLength;
+    }
+    if (validatableInput.maxLength != null &&
+        typeof validatableInput.value === 'string') {
+        isValid =
+            isValid && validatableInput.value.length <= validatableInput.maxLength;
+    }
+    if (validatableInput.min != null &&
+        typeof validatableInput.value === 'number') {
+        isValid = isValid && validatableInput.value >= validatableInput.min;
+    }
+    if (validatableInput.max != null &&
+        typeof validatableInput.value === 'number') {
+        isValid = isValid && validatableInput.value <= validatableInput.max;
+    }
+    return isValid;
+}
 // AutoBind Decorator
 function autobind(_, _2, descriptor) {
     const originalMethod = descriptor.value;
@@ -17,6 +74,41 @@ function autobind(_, _2, descriptor) {
         },
     };
     return adjustedDescriptor;
+}
+// ProjectList Class
+class ProjectList {
+    constructor(type) {
+        this.type = type;
+        this.templateElement = document.getElementById('project-list');
+        this.hostElement = document.getElementById('app');
+        this.assignedProjects = [];
+        const importedNode = document.importNode(this.templateElement.content, true);
+        this.element = importedNode.firstElementChild;
+        this.element.id = `${this.type}-projects`;
+        projectState.addListener((projects) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        });
+        this.attach();
+        this.renderContent();
+    }
+    renderProjects() {
+        const listEl = document.getElementById(`${this.type}-projects-list`);
+        for (const prjItem of this.assignedProjects) {
+            const listItem = document.createElement('li');
+            listItem.textContent = prjItem.title;
+            listEl.appendChild(listItem);
+        }
+    }
+    renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.element.querySelector('ul').id = listId;
+        this.element.querySelector('h2').textContent =
+            this.type.toUpperCase() + ' PROJECTS';
+    }
+    attach() {
+        this.hostElement.insertAdjacentElement('beforeend', this.element);
+    }
 }
 // Main class
 class ProjectInput {
@@ -46,6 +138,31 @@ class ProjectInput {
         const enetredTitle = this.titleInputElemnt.value;
         const enetredDescription = this.descriptionInputElemnt.value;
         const enetredPeaople = this.peopleInputElement.value;
+        const titleValidatable = {
+            value: enetredTitle,
+            required: true,
+        };
+        const descriptionValidatble = {
+            value: enetredDescription,
+            required: true,
+            minLength: 5,
+        };
+        const peopleValidatable = {
+            value: +enetredPeaople,
+            required: true,
+            min: 1,
+            max: 5,
+        };
+        // validation using validation method
+        if (!validate(titleValidatable) ||
+            !validate(descriptionValidatble) ||
+            !validate(peopleValidatable)) {
+            alert('Invalid Input');
+            return;
+        }
+        else {
+            return [enetredTitle, enetredDescription, +enetredPeaople];
+        }
         // This Validation is insufficient so use validation method
         // if (
         //   enetredTitle.trim().length === 0 ||
@@ -55,8 +172,8 @@ class ProjectInput {
         //   alert('Invalid input');
         //   return;
         // } else {
-        //   return [enetredTitle, enetredDescription, +enetredPeaople]; 
-        //   // we can use parseFloat() or + before people to make it number
+        //   return [enetredTitle, enetredDescription, +enetredPeaople];
+        // we can use parseFloat() or + before people to make it number
         // }
     }
     clearInput() {
@@ -71,6 +188,7 @@ class ProjectInput {
         // to check if data is tuple (they are simply a form of array)
         if (Array.isArray(userInput)) {
             const [title, desc, people] = userInput;
+            projectState.addProject(title, desc, people);
             console.log(title, desc, people);
             this.clearInput();
         }
@@ -89,3 +207,5 @@ __decorate([
     autobind
 ], ProjectInput.prototype, "submitHandler", null);
 const projectInput = new ProjectInput();
+const activeProjectList = new ProjectList('active');
+const finishedProjectList = new ProjectList('finished');

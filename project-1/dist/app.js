@@ -5,7 +5,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-// OOPs apraoch for making form visble as templates don't show html until rendered by js
 // Project Types
 // This is to make all project types autocomplete and be vary of error
 var ProjectStatus;
@@ -52,6 +51,19 @@ class ProjectState extends State {
         //   people: numOfPeople,
         // };
         this.projects.push(newProject);
+        for (const listenerFn of this.listeners) {
+            listenerFn(this.projects.slice());
+        }
+        this.updateListeners();
+    }
+    moveProject(projectId, newStatus) {
+        const project = this.projects.find((prj) => prj.id === projectId);
+        if (project && project.status !== newStatus) {
+            project.status = newStatus;
+            this.updateListeners();
+        }
+    }
+    updateListeners() {
         for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice());
         }
@@ -113,6 +125,48 @@ class Component {
         this.hostElement.insertAdjacentElement(insertAtBegining ? 'afterbegin' : 'beforeend', this.element);
     }
 }
+// project Item Class
+class ProjectItem extends Component {
+    constructor(hostID, project) {
+        super('single-project', hostID, false, project.id);
+        this.project = project;
+        this.configure();
+        this, this.renderContent();
+    }
+    // getters check no. of emebers assigned
+    get members() {
+        if (this.project.people === 1) {
+            return '1 member';
+        }
+        else {
+            return `${this.project.people} memebers`;
+        }
+    }
+    dragStartHamdler(event) {
+        console.log(event);
+        event.dataTransfer.setData('text/plain', this.project.id);
+        // telling that data is moved
+        event.dataTransfer.effectAllowed = 'move';
+    }
+    dragEndHandler(_) {
+        console.log('DragEnd');
+    }
+    configure() {
+        this.element.addEventListener('dragstart', this.dragStartHamdler);
+        this.element.addEventListener('dragend', this.dragEndHandler);
+    }
+    renderContent() {
+        this.element.querySelector('h2').textContent = this.project.title;
+        this.element.querySelector('h3').textContent = this.members + ' assigned';
+        this.element.querySelector('p').textContent = this.project.description;
+    }
+}
+__decorate([
+    autobind
+], ProjectItem.prototype, "dragStartHamdler", null);
+__decorate([
+    autobind
+], ProjectItem.prototype, "dragEndHandler", null);
 // ProjectList Class
 class ProjectList extends Component {
     constructor(type) {
@@ -122,7 +176,28 @@ class ProjectList extends Component {
         this.configure();
         this.renderContent();
     }
+    dragLeaveHandler(event) {
+        const listEl = this.element.querySelector('ul');
+        listEl.classList.remove('droppable');
+    }
+    dragOverHandler(event) {
+        if (event.dataTransfer && event.dataTransfer.types[0] === 'text/plain') {
+            // default is to not allow dropping in JS
+            event.preventDefault();
+            const listEl = this.element.querySelector('ul');
+            listEl.classList.add('droppable');
+        }
+    }
+    dropHandler(event) {
+        console.log(event.dataTransfer.getData('text/plain'));
+        const prjId = event.dataTransfer.getData('text/plain');
+        projectState.moveProject(prjId, this.type === 'active' ? ProjectStatus.Active : ProjectStatus.Finished);
+    }
     configure() {
+        //eventListeners
+        this.element.addEventListener('dragover', this.dragOverHandler);
+        this.element.addEventListener('drop', this.dropHandler);
+        this.element.addEventListener('dragleave', this.dragLeaveHandler);
         projectState.addListener((projects) => {
             const relevantProjects = projects.filter((prj) => {
                 if (this.type === 'active') {
@@ -137,10 +212,14 @@ class ProjectList extends Component {
     renderProjects() {
         const listEl = document.getElementById(`${this.type}-projects-list`);
         listEl.innerHTML = '';
+        // for (const prjItem of this.assignedProjects) {
+        //   const listItem = document.createElement('li');
+        //   listItem.textContent = prjItem.title;
+        //   listEl.appendChild(listItem);
+        // }
+        // Other Way
         for (const prjItem of this.assignedProjects) {
-            const listItem = document.createElement('li');
-            listItem.textContent = prjItem.title;
-            listEl.appendChild(listItem);
+            new ProjectItem(this.element.querySelector('ul').id, prjItem);
         }
     }
     renderContent() {
@@ -150,6 +229,15 @@ class ProjectList extends Component {
             this.type.toUpperCase() + ' PROJECTS';
     }
 }
+__decorate([
+    autobind
+], ProjectList.prototype, "dragLeaveHandler", null);
+__decorate([
+    autobind
+], ProjectList.prototype, "dragOverHandler", null);
+__decorate([
+    autobind
+], ProjectList.prototype, "dropHandler", null);
 // Main class
 class ProjectInput extends Component {
     constructor() {

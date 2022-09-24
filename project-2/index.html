@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Understanding TypeScript</title>
+    <!-- <link rel="stylesheet" type="text/css" href="../app.css" /> -->
+    <style>
+      html {
+        font-family: sans-serif;
+      }
+
+      #map {
+        width: 90%;
+        height: 20rem;
+        border: 3px solid rgb(10, 194, 123);
+        margin: 2rem auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      form {
+        text-align: center;
+        margin: 2rem auto;
+      }
+    </style>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg"
+      async
+      defer
+    ></script>
+    <script src="public/bundle.js" defer></script>
+  </head>
+  <body>
+    <div id="map">
+      <p>please Enter an Address</p>
+    </div>
+    <form>
+      <label
+        >address:
+        <input type="text" id="address" />
+      </label>
+      <button type="submit">SEARCH ADDRESS</button>
+    </form>
+  </body>
+</html>
+
+<!-- working on maps without google -->
+<!-- Include the following given scripts -->
+<!-- 
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/css/ol.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.1.1/build/ol.js"></script>
+ -->

@@ -1,1 +1,1 @@
-### React app using ts
+### Todo app using React with ts
